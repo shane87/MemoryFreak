@@ -1,0 +1,21 @@
+MemoryFreak - The Memory management app for Galaxy S Captivate
+Copyleft (cl) 2011 Eric Clothier
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+MemoryFreak is an app designed to provide users with the ability to change their lmk settings to a variety of pre-defined values. MemoryFreak will also provide controls to adjust ZRAM size, and Swappiness values. Other memory-related controls may be added in the future. MemoryFreak is being designed and tested on a Samsung Captivate running eXistZ's Talon kernel. While any i-9000 based phone running Talon kernel MAY be able to run MemoryFreak, I CANNOT gaurantee compatibility. Nor may I, or anyone else involved in this project, or any projects that this project builds on, be held liable or accountable for any damages/losses incurred by using this app!!
+
+A huge Thank You!! goes to eXistZ @ xda, kodos96 @ xda, ytt3r @ xda, and zacharias.maladroit @ xda. They developed and are maintaining the Talon kernel, and without the Talon kernel, this app would not be!!
+
