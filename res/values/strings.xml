@@ -2,4 +2,10 @@
 <resources>
     <string name="hello">Hello World, MemoryFreakActivity!</string>
     <string name="app_name">MemoryFreak</string>
+    <string name="lmkSetTxt">LMK Settings:</string>
+    <string name="zramHeaderTxt">ZRAM Settings</string>
+    <string name="zramBtnTxt">ZRAM Main Control</string>
+    <string name="zramSeekTxt">ZRAM Size</string>
+    <string name="divider">_____________________________________________________</string>
+    <string name="swapHeaderTxt">Swapiness:</string>
 </resources>
