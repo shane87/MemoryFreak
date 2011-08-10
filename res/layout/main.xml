@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:weightSum="1">
+    android:weightSum="1" android:layout_width="wrap_content">
     <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:text="@string/lmkSetTxt" android:layout_width="wrap_content"></TextView>
-    <Spinner android:id="@+id/spinner1" android:layout_height="wrap_content" android:layout_width="match_parent"></Spinner>
+    <Spinner android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/lmkSpinner"></Spinner>
     <TextView android:layout_height="wrap_content" android:id="@+id/textView4" android:text="@string/divider" android:layout_width="wrap_content"></TextView>
-    <TextView android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="wrap_content" android:text="@string/zramHeaderTxt"></TextView>
-    <CheckBox android:layout_height="wrap_content" android:id="@+id/checkBox1" android:text="@string/zramBtnTxt" android:layout_width="wrap_content"></CheckBox>
-    <TextView android:layout_height="wrap_content" android:id="@+id/textView3" android:text="@string/zramSeekTxt" android:layout_width="wrap_content"></TextView>
-    <SeekBar android:layout_height="wrap_content" android:id="@+id/seekBar1" android:layout_width="match_parent"></SeekBar>
+    <TextView android:layout_height="wrap_content" android:text="@string/zramSeekTxt" android:layout_width="wrap_content" android:id="@+id/zramTV"></TextView>
+    <SeekBar android:layout_height="wrap_content" android:id="@+id/zramSB" android:max="8" android:layout_width="match_parent" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
     <TextView android:layout_height="wrap_content" android:id="@+id/textView5" android:text="@string/divider" android:layout_width="wrap_content"></TextView>
-    <TextView android:layout_height="wrap_content" android:id="@+id/textView6" android:text="@string/swapHeaderTxt" android:layout_width="wrap_content"></TextView>
-    <SeekBar android:layout_height="wrap_content" android:id="@+id/seekBar2" android:layout_width="match_parent"></SeekBar>
+    <TextView android:layout_height="wrap_content" android:text="@string/swapHeaderTxt" android:layout_width="wrap_content" android:id="@+id/swappinessTV"></TextView>
+    <SeekBar android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/swappinessSB" android:max="10" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
 </LinearLayout>
