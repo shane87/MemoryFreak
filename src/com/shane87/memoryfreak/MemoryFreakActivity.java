@@ -10,6 +10,8 @@ import com.shane87.memoryfreak.R;
 import com.shane87.memoryfreak.ShellInterface;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -138,6 +140,25 @@ public class MemoryFreakActivity extends Activity {
     		tmpArr = temp.split("=");
     		fgAppMem = Integer.parseInt(tmpArr[1].trim());
     		
+    		switch(fgAppMem)
+    		{
+    		case(2560):
+    		{
+    			lmkSelection = 0;
+    			break;
+    		}
+    		case(2048):
+    		{
+    			lmkSelection = 1;
+    			break;
+    		}
+    		default:
+    		{
+    			lmkSelection = 2;
+    			break;
+    		}
+    		}
+    		
     		do
     		{
     			temp = reader.readLine();
@@ -186,7 +207,7 @@ public class MemoryFreakActivity extends Activity {
     	lmkSpin.setAdapter(adapterForLmk);
     	
     	//Finally, we will set the default selection
-    	lmkSpin.setSelection(2);
+    	lmkSpin.setSelection(lmkSelection);
     	
     	//Now we need the OnItemSelected listener for the lmk spinner
     	OnItemSelectedListener lmkListener = new Spinner.OnItemSelectedListener()
@@ -537,7 +558,26 @@ public class MemoryFreakActivity extends Activity {
     private boolean applySettings()
     {
     	if(saveSettings())
-    		ShellInterface.runCommand("reboot");
+    	{
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    		builder.setTitle("Reboot to Apply Settings?");
+    		builder.setMessage("Memory Freak has saved your lmk settings to ram.conf. To apply these settings, your phone will now be rebooted. Press \"Yes\" to continue, or \"No\" to return to Memory Freak without rebooting.");
+    		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {}
+			});
+    		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which)
+				{
+					ShellInterface.runCommand("reboot");
+				}
+			});
+    		
+    		AlertDialog alert = builder.create();
+    		
+    		alert.show();
+    	}
     	return true;
     }
 }
