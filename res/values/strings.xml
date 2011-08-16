@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MemoryFreakActivity!</string>
     <string name="app_name">MemoryFreak</string>
     <string name="lmkSetTxt">LMK Settings:</string>
     <string name="zramBtnTxt">ZRAM Main Control</string>
@@ -8,4 +7,8 @@
     <string name="divider">_____________________________________________________</string>
     <string name="swapHeaderTxt">Swapiness:</string>
     <string name="kErrTxt">OOPS!!!!</string>
+    <string name="perfString">   Performance &lt;--------------------------&gt; Multitasking</string>
+    <string name="perfResetBtnTxt">Reset To Talon Default</string>
+    <string name="version">1.10b</string>
+    <string name="helpBtnTxt">Help / Tips</string>
 </resources>

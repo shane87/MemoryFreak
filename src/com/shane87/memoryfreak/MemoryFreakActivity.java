@@ -1,9 +1,7 @@
 package com.shane87.memoryfreak;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 
 import com.shane87.memoryfreak.R;
@@ -12,6 +10,8 @@ import com.shane87.memoryfreak.ShellInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,12 +31,18 @@ public class MemoryFreakActivity extends Activity {
 	int fgAppMem;
 	int swappiness;
 	int zramDiskSize;
+	int hidAppMem;
+	int empAppMem;
 	
 	TextView zramTxt;
 	TextView swapTxt;
+	TextView perfSizeTxt;
 	Spinner lmkSpin;
 	SeekBar zramSeek;
 	SeekBar swapSeek;
+	SeekBar perfSeek;
+	Button helpBtn;
+	Button resetBtn;
 	
 	int lmkSelection;
 	
@@ -48,7 +55,10 @@ public class MemoryFreakActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!checkKernel())
+        {
         	setContentView(R.layout.kerr);
+        	showKErrNote();
+        }
         else
         {
         	setContentView(R.layout.main);
@@ -87,6 +97,11 @@ public class MemoryFreakActivity extends Activity {
     	case(R.id.apply):
     	{
     		applySettings();
+    		break;
+    	}
+    	case(R.id.about):
+    	{
+    		showAboutScreen();
     		break;
     	}
     	}
@@ -155,6 +170,21 @@ public class MemoryFreakActivity extends Activity {
     		default:
     		{
     			lmkSelection = 2;
+    			do
+    			{
+    				temp = reader.readLine();
+    			}while(!temp.startsWith("HIDDEN_APP_MEM"));
+    			
+    			tmpArr = temp.split("=");
+    			hidAppMem = Integer.parseInt(tmpArr[1].trim());
+    			
+    			do
+    			{
+    				temp = reader.readLine();
+    			}while(!temp.startsWith("EMPTY_APP_MEM"));
+    			
+    			tmpArr = temp.split("=");
+    			empAppMem = Integer.parseInt(tmpArr[1].trim());
     			break;
     		}
     		}
@@ -187,9 +217,26 @@ public class MemoryFreakActivity extends Activity {
     	//Get refs to our controls, and save them in our global vars
     	zramTxt = (TextView)findViewById(R.id.zramTV);
     	swapTxt = (TextView)findViewById(R.id.swappinessTV);
+    	perfSizeTxt = (TextView)findViewById(R.id.perfSizeTV);
     	zramSeek = (SeekBar)findViewById(R.id.zramSB);
     	swapSeek = (SeekBar)findViewById(R.id.swappinessSB);
+    	perfSeek = (SeekBar)findViewById(R.id.perfSeekbar);
     	lmkSpin = (Spinner)findViewById(R.id.lmkSpinner);
+    	helpBtn = (Button)findViewById(R.id.perfHelpBtn);
+    	resetBtn = (Button)findViewById(R.id.perfResetBtn);
+    	
+    	if(lmkSelection == 2)
+    	{
+    		perfSeek.setVisibility(View.VISIBLE);
+    		perfSizeTxt.setVisibility(View.VISIBLE);
+    		resetBtn.setVisibility(View.VISIBLE);
+    	}
+    	else
+    	{
+    		perfSeek.setVisibility(View.GONE);
+    		perfSizeTxt.setVisibility(View.GONE);
+    		resetBtn.setVisibility(View.GONE);
+    	}
     	
     	//Now lets create our array adapter for the lmk spinner, set the propper vals, and
     	//link it to the spinner
@@ -217,6 +264,18 @@ public class MemoryFreakActivity extends Activity {
 					int arg2, long arg3) 
 			{
 				lmkSelection = (int)arg0.getSelectedItemId();
+				if(lmkSelection == 2)
+				{
+					perfSeek.setVisibility(View.VISIBLE);
+					perfSizeTxt.setVisibility(View.VISIBLE);
+					resetBtn.setVisibility(View.VISIBLE);
+				}
+				else
+				{
+					perfSeek.setVisibility(View.GONE);
+					perfSizeTxt.setVisibility(View.GONE);
+					resetBtn.setVisibility(View.GONE);
+				}
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {}
@@ -268,9 +327,48 @@ public class MemoryFreakActivity extends Activity {
 			}
 		});
     	
+    	perfSeek.setMax(6);
+    	perfSeek.setProgress((hidAppMem / 1024) - 7);
+    	perfSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+			
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+			
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				hidAppMem = (progress + 7) * 1024;
+				if(hidAppMem <= 9216)
+					empAppMem = 12288;
+				else
+					empAppMem = hidAppMem + 2048;
+				
+				perfSizeTxt.setText("Hidden App Mem Size (MB): " 
+						+ Integer.toString((hidAppMem * 4) / 1024));
+				
+			}
+		});
+    	
+    	helpBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				showHelp();
+				
+			}
+		});
+    	resetBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				resetHAppM();
+				
+			}
+		});
+    	
     	//finally, lets set our initial txt strings with the correct current info
     	zramTxt.setText("ZRAM Size: " + Integer.toString(zramDiskSize));
     	swapTxt.setText("Swappiness: " + Integer.toString(swappiness));
+    	perfSizeTxt.setText("Hidden App Mem Size (MB): " 
+    			+ Integer.toString((hidAppMem * 4) / 1024));
     	
     	return true;
     }
@@ -356,11 +454,12 @@ public class MemoryFreakActivity extends Activity {
     		secsermem = 4096;
     		bupappmem = 4096;
     		homeappmem = 3072;
-    		hidappmem = 9216;
-    		empappmem = 12288;
+    		hidappmem = hidAppMem;
+    		empappmem = empAppMem;
     		
     		lmkParAdj = "0,1,2,3,7,15";
-    		lmkParMin = "1024,2048,3072,4096,9216,12288";
+    		lmkParMin = "1024,2048,3072,4096," + Integer.toString(hidappmem) + ","
+    				+ Integer.toString(empappmem);
     		break;
     	}
     	}
@@ -377,9 +476,18 @@ public class MemoryFreakActivity extends Activity {
     			if(temp == null)
     				break;
     			
-    			if(temp.startsWith("#") || temp.startsWith("RAM_CONF") ||
-    					temp.startsWith("LOW_MEM_RESERVE"))
-    				writer.write(temp + "\n");
+    			if(temp.startsWith("#") || temp.startsWith("RAM_CONF"))
+    				writer.write(temp.trim() + "\n");
+    			else if(temp.startsWith("LOWMEM_RESERVE_RATIO"))
+    			{
+    				tempArr = temp.split("=");
+    				temp = tempArr[0];
+    				if(zramDiskSize < 128)
+    					temp = temp.concat("=32\n");
+    				else
+    					temp = temp.concat("=256\n");
+    				writer.write(temp);
+    			}
     			else if(temp.startsWith("FOREGROUND_APP_ADJ"))
     			{
     				tempArr = temp.split("=");
@@ -561,7 +669,10 @@ public class MemoryFreakActivity extends Activity {
     	{
     		AlertDialog.Builder builder = new AlertDialog.Builder(this);
     		builder.setTitle("Reboot to Apply Settings?");
-    		builder.setMessage("Memory Freak has saved your lmk settings to ram.conf. To apply these settings, your phone will now be rebooted. Press \"Yes\" to continue, or \"No\" to return to Memory Freak without rebooting.");
+    		builder.setMessage("Memory Freak has saved your lmk settings to ram.conf." +
+    				" To apply these settings, your phone will now be rebooted. Press" +
+    				" \"Yes\" to continue, or \"No\" to return to Memory Freak without" +
+    				" rebooting.");
     		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which) {}
@@ -579,5 +690,148 @@ public class MemoryFreakActivity extends Activity {
     		alert.show();
     	}
     	return true;
+    }
+    
+    private void showKErrNote()
+    {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("Wrong Kernel!");
+    	builder.setMessage("Uh Oh!!\nIt looks like you have an incompatible kernel" +
+    			"installed!\n\nThis app is designed for, and indeed only works with," +
+    			" Talon Kernel, by eXistZ, kodos96, ytt3r, and zacharias.maladroit.\n\n" +
+    			"For more information, or to get Talon kernel, please visit XDA by" +
+    			" selecting \"More Info\".");
+    	builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+				
+			}
+		});
+    	builder.setNeutralButton("More Info", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				 String url = "http://forum.xda-developers.com/showthread.php?t=1050206";
+				 Intent i = new Intent(Intent.ACTION_VIEW);
+				 i.setData(Uri.parse(url));
+				 startActivity(i);
+				 finish();
+				
+			}
+		});
+    	builder.setCancelable(false);
+    	
+    	AlertDialog alert = builder.create();
+    	alert.show();
+    }
+    
+    private void showAboutScreen()
+    {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("Memory Freak v" + getResources().getString(R.string.version));
+    	builder.setMessage("Memory Freak is an app for setting and adjusting" +
+    			" lmk values and other memory related settings. The main lmk settings" +
+    			" are provided in three pre-defined presets. The provided presets" +
+    			" are Stock (Galaxy S), Nexus S (Gingerbread Default), and Talon" +
+    			" (Talon Kernel Default). Also exposed are controls for ZRAM," +
+    			" Swappiness, and, when the Talon preset is selected, Hidden App Mem.\n\n" +
+    			"A HUGE thanks goes to:\n" +
+    			"eXistZ @ xda-developers.com for the Talon Kernel, and for the initial " +
+    			"idea for the app\nkodos96 @ xda-developers.com for co-dev on the Talon " +
+    			"Kernel, and designing the ram.conf system that Memory Freak utilizes " +
+    			"to set the lmk values\nytt3r @ xda-developers.com for co-dev of the " +
+    			"Talon Kernel\nzacharias.maladroit @ xda-developers.com for co-dev " +
+    			"of the Talon Kernel\n\nAnd to YOU, for using this app!\nPlease remember " +
+    			"that feedback is some of the most appreciated help!");
+    	builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+    	builder.setNeutralButton("More Info", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				 String url = "http://forum.xda-developers.com/showthread.php?t=1050206";
+				 Intent i = new Intent(Intent.ACTION_VIEW);
+				 i.setData(Uri.parse(url));
+				 startActivity(i);
+				 finish();
+				
+			}
+		});
+    	builder.setPositiveButton("Donate", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				 String url = "http://forum.xda-developers.com/donatetome.php?u=3482571";
+				 Intent i = new Intent(Intent.ACTION_VIEW);
+				 i.setData(Uri.parse(url));
+				 startActivity(i);
+				
+			}
+		});
+    	
+    	AlertDialog alert = builder.create();
+    	alert.show();
+    }
+    
+    private void resetHAppM()
+    {
+    	hidAppMem = 9216;
+    	empAppMem = 12288;
+    	
+    	if(perfSeek != null)
+    		perfSeek.setProgress((9216 / 1024) -7);
+    	if(perfSizeTxt != null)
+    		perfSizeTxt.setText("Hidden App Mem Size (MB): " + 
+    						Integer.toString((hidAppMem * 4) / 1024));
+    }
+    
+    private void showHelp()
+    {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("Memory Freak Help");
+    	builder.setMessage("Memory freak is designed to place control of the lmk " +
+    					   "values in the user's hands, while trying to prevent " +
+    					   "some of the more common lmk adjustment errors. Here " +
+    					   "are some tips to help get you started.\n\n" +
+    					   "1. The LMK Settings dropdown allows you to choose one of " +
+    					   "three preset values, Stock, Nexus S, and Talon. Stock is the setup " +
+    					   "designed by Samsung for the Gingerbread platform on the " +
+    					   "Galaxy S. Nexus S is the setup originaly designed by " +
+    					   "google for the AOSP Gingerbread platform. Talon is the " +
+    					   "current setup designed by kodos96 for the Talon Kernel\n\n" +
+    					   "2. The ZRAM slider adjusts ZRAM size, in MB, from 0 (disabled) " +
+    					   "to 256 in steps of 32MB. The higher this value is, the more " +
+    					   "RAM the kernel can compress and store.\n\n" +
+    					   "3. The Swappiness slider lets you adjust how frequently " +
+    					   "the kernel swaps pages from RAM to ZRAM. This is " +
+    					   "adjustable from 0 (Swap Disabled) to 100 in steps of 10.\n\n" +
+    					   "4. The Hidden App Mem Size slider, which is only available " +
+    					   "when the Talon preset is selected, allows the user to fine-" +
+    					   "tune their lmk for their particular needs, whether it be " +
+    					   "more single task oriented, or " +
+    					   "multitasking ability. The reset button will return " +
+    					   "the value back to the default Talon setting.");
+    	builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+    	/*builder.setNeutralButton("More Info", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				 String url = "http://forum.xda-developers.com/showthread.php?t=1050206";
+				 Intent i = new Intent(Intent.ACTION_VIEW);
+				 i.setData(Uri.parse(url));
+				 startActivity(i);
+				 finish();
+				
+			}
+		});*/
+    	builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+    	
+    	AlertDialog alert = builder.create();
+    	alert.show();
     }
 }

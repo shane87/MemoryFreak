@@ -5,10 +5,17 @@
     android:weightSum="1" android:layout_width="wrap_content">
     <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:text="@string/lmkSetTxt" android:layout_width="wrap_content"></TextView>
     <Spinner android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/lmkSpinner"></Spinner>
+    <TextView android:layout_width="match_parent" android:text="TextView" android:layout_height="wrap_content" android:id="@+id/perfSizeTV"></TextView>
+    <SeekBar android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingLeft="25px" android:paddingRight="25px" android:id="@+id/perfSeekbar"></SeekBar>
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/relativeLayout1">
+        <Button android:layout_height="wrap_content" android:layout_alignParentTop="true" android:id="@+id/perfResetBtn" android:text="@string/perfResetBtnTxt" android:layout_width="match_parent"></Button>
+    </RelativeLayout>
     <TextView android:layout_height="wrap_content" android:id="@+id/textView4" android:text="@string/divider" android:layout_width="wrap_content"></TextView>
     <TextView android:layout_height="wrap_content" android:text="@string/zramSeekTxt" android:layout_width="wrap_content" android:id="@+id/zramTV"></TextView>
-    <SeekBar android:layout_height="wrap_content" android:id="@+id/zramSB" android:max="8" android:layout_width="match_parent" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
+    <SeekBar android:layout_height="wrap_content" android:id="@+id/zramSB" android:max="8" android:layout_width="match_parent" android:paddingRight="25px" android:paddingLeft="25px"></SeekBar>
     <TextView android:layout_height="wrap_content" android:id="@+id/textView5" android:text="@string/divider" android:layout_width="wrap_content"></TextView>
     <TextView android:layout_height="wrap_content" android:text="@string/swapHeaderTxt" android:layout_width="wrap_content" android:id="@+id/swappinessTV"></TextView>
-    <SeekBar android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/swappinessSB" android:max="10" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
+    <SeekBar android:id="@+id/swappinessSB" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
+    <TextView android:layout_width="wrap_content" android:text="@string/divider" android:id="@+id/textView2" android:layout_height="wrap_content"></TextView>
+    <Button android:layout_height="wrap_content" android:id="@+id/perfHelpBtn" android:layout_marginLeft="10px" android:text="@string/helpBtnTxt" android:paddingRight="15px" android:layout_width="match_parent"></Button>
 </LinearLayout>
