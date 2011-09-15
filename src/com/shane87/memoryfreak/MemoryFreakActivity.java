@@ -34,6 +34,14 @@ public class MemoryFreakActivity extends Activity {
 	int hidAppMem;
 	int empAppMem;
 	
+	int Tfgappadj = 0, Tvisappadj = 0, Tpercappadj = 0, Thwappadj = 0, Tsecseradj = 0,
+    		Tbupappadj = 0, Thomeappadj = 0, Thidappminadj = 0, Tempappadj = 0;
+    int Tfgappmem = 0, Tvisappmem = 0, Tpercappmem = 0, Thwappmem = 0, Tsecsermem = 0,
+    		Tbupappmem = 0, Thomeappmem = 0, Thidappmem = 0, Tempappmem = 0;
+    String TlmkParAdj = "", TlmkParMin = "";
+    
+    boolean talDefLoaded;
+	
 	TextView zramTxt;
 	TextView swapTxt;
 	TextView perfSizeTxt;
@@ -140,6 +148,7 @@ public class MemoryFreakActivity extends Activity {
     
     private boolean loadCurSettings()
     {
+    	talDefLoaded = loadTalonSettings();
     	try
     	{
     		BufferedReader reader = new BufferedReader(new FileReader("/etc/ram.conf"));
@@ -246,8 +255,8 @@ public class MemoryFreakActivity extends Activity {
     	
     	//Next, lets set the dropdown view resource and lets add the values
     	adapterForLmk.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    	adapterForLmk.add("Stock");
-    	adapterForLmk.add("Nexus S");
+    	adapterForLmk.add("Samsung Stock");
+    	adapterForLmk.add("Gingerbread Stock (Nexus S)");
     	adapterForLmk.add("Talon");
     	
     	//Then we can link the adapter to the spinner
@@ -286,7 +295,7 @@ public class MemoryFreakActivity extends Activity {
     	
     	//Now that the spinner is setup, lets set up our seekbars, starting with zram
     	//First, we will set the seek bar to the proper progress
-    	zramSeek.setMax(8);
+    	zramSeek.setMax(21);
     	zramSeek.setProgress(zramDiskSize / 32);
     	//Now we will build the listener
     	zramSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
@@ -343,7 +352,7 @@ public class MemoryFreakActivity extends Activity {
 				else
 					empAppMem = hidAppMem + 2048;
 				
-				perfSizeTxt.setText("Hidden App Mem Size (MB): " 
+				perfSizeTxt.setText("Memory for Background Apps (MB): " 
 						+ Integer.toString((hidAppMem * 4) / 1024));
 				
 			}
@@ -367,7 +376,7 @@ public class MemoryFreakActivity extends Activity {
     	//finally, lets set our initial txt strings with the correct current info
     	zramTxt.setText("ZRAM Size: " + Integer.toString(zramDiskSize));
     	swapTxt.setText("Swappiness: " + Integer.toString(swappiness));
-    	perfSizeTxt.setText("Hidden App Mem Size (MB): " 
+    	perfSizeTxt.setText("Memory for Background Apps (MB): " 
     			+ Integer.toString((hidAppMem * 4) / 1024));
     	
     	return true;
@@ -380,6 +389,8 @@ public class MemoryFreakActivity extends Activity {
     	int fgappmem = 0, visappmem = 0, percappmem = 0, hwappmem = 0, secsermem = 0,
     		bupappmem = 0, homeappmem = 0, hidappmem = 0, empappmem = 0;
     	String lmkParAdj = "", lmkParMin = "";
+    	
+    	String[] TlmkParMinParts;
     	
     	switch(lmkSelection)
     	{
@@ -437,29 +448,61 @@ public class MemoryFreakActivity extends Activity {
     	}
     	case(2):
     	{
-    		fgappadj = 0;
-    		visappadj = 1;
-    		percappadj = 2;
-    		hwappadj = 3;
-    		secseradj = 3;
-    		bupappadj = 3;
-    		homeappadj = 2;
-    		hidappminadj = 5;
-    		empappadj = 15;
+    		if(talDefLoaded)
+    		{
+    			fgappadj = Tfgappadj;
+    			visappadj = Tvisappadj;
+    			percappadj = Tpercappadj;
+    			hwappadj = Thwappadj;
+    			secseradj = Tsecseradj;
+    			bupappadj = Tbupappadj;
+    			homeappadj = Thomeappadj;
+    			hidappminadj = Thidappminadj;
+    			empappadj = Tempappadj;
     		
-    		fgappmem = 1024;
-    		visappmem = 2048;
-    		percappmem = 3072;
-    		hwappmem = 4096;
-    		secsermem = 4096;
-    		bupappmem = 4096;
-    		homeappmem = 3072;
-    		hidappmem = hidAppMem;
-    		empappmem = empAppMem;
+    			fgappmem = Tfgappmem;
+    			visappmem = Tvisappmem;
+    			percappmem = Tpercappmem;
+    			hwappmem = Thwappmem;
+    			secsermem = Tsecsermem;
+    			bupappmem = Tbupappmem;
+    			homeappmem = Thomeappmem;
+    			hidappmem = hidAppMem;
+    			empappmem = empAppMem;
     		
-    		lmkParAdj = "0,1,2,3,7,15";
-    		lmkParMin = "1024,2048,3072,4096," + Integer.toString(hidappmem) + ","
+    			lmkParAdj = TlmkParAdj;
+    			
+    			TlmkParMinParts = TlmkParMin.split(",");
+    			lmkParMin = TlmkParMinParts[0] + "," + TlmkParMinParts[1] + "," +
+    					TlmkParMinParts[2] + "," + TlmkParMinParts[3] + "," +
+    					Integer.toString(hidappmem) + "," + Integer.toString(empappmem);
+    		}
+    		else
+    		{
+    			fgappadj = 0;
+    			visappadj = 1;
+    			percappadj = 2;
+    			hwappadj = 3;
+    			secseradj = 3;
+    			bupappadj = 3;
+    			homeappadj = 2;
+    			hidappminadj = 5;
+    			empappadj = 15;
+    		
+    			fgappmem = 1024;
+    			visappmem = 2048;
+    			percappmem = 3072;
+    			hwappmem = 4096;
+    			secsermem = 4096;
+    			bupappmem = 4096;
+    			homeappmem = 3072;
+    			hidappmem = hidAppMem;
+    			empappmem = empAppMem;
+    		
+    			lmkParAdj = "0,1,2,3,7,15";
+    			lmkParMin = "1024,2048,3072,4096," + Integer.toString(hidappmem) + ","
     				+ Integer.toString(empappmem);
+    		}
     		break;
     	}
     	}
@@ -669,7 +712,7 @@ public class MemoryFreakActivity extends Activity {
     	{
     		AlertDialog.Builder builder = new AlertDialog.Builder(this);
     		builder.setTitle("Reboot to Apply Settings?");
-    		builder.setMessage("Memory Freak has saved your lmk settings to ram.conf." +
+    		builder.setMessage("Memory Freak has saved your low memeory killer settings to ram.conf." +
     				" To apply these settings, your phone will now be rebooted. Press" +
     				" \"Yes\" to continue, or \"No\" to return to Memory Freak without" +
     				" rebooting.");
@@ -732,9 +775,9 @@ public class MemoryFreakActivity extends Activity {
     	builder.setMessage("Memory Freak is an app for setting and adjusting" +
     			" lmk values and other memory related settings. The main lmk settings" +
     			" are provided in three pre-defined presets. The provided presets" +
-    			" are Stock (Galaxy S), Nexus S (Gingerbread Default), and Talon" +
+    			" are Samsung Stock (Galaxy S), Gingerbread Stock (Nexus S), and Talon" +
     			" (Talon Kernel Default). Also exposed are controls for ZRAM," +
-    			" Swappiness, and, when the Talon preset is selected, Hidden App Mem.\n\n" +
+    			" Swappiness, and, when the Talon preset is selected, Memory for Background Apps.\n\n" +
     			"A HUGE thanks goes to:\n" +
     			"eXistZ @ xda-developers.com for the Talon Kernel, and for the initial " +
     			"idea for the app\nkodos96 @ xda-developers.com for co-dev on the Talon " +
@@ -775,13 +818,21 @@ public class MemoryFreakActivity extends Activity {
     
     private void resetHAppM()
     {
-    	hidAppMem = 9216;
-    	empAppMem = 12288;
+    	if(talDefLoaded)
+    	{
+    		hidAppMem = Thidappmem;
+    		empAppMem = Tempappmem;
+    	}
+    	else
+    	{
+    		hidAppMem = 9216;
+    		empAppMem = 12288;
+    	}
     	
     	if(perfSeek != null)
-    		perfSeek.setProgress((9216 / 1024) -7);
+    		perfSeek.setProgress((hidAppMem / 1024) -7);
     	if(perfSizeTxt != null)
-    		perfSizeTxt.setText("Hidden App Mem Size (MB): " + 
+    		perfSizeTxt.setText("Memory for Background Apps (MB): " + 
     						Integer.toString((hidAppMem * 4) / 1024));
     }
     
@@ -793,19 +844,26 @@ public class MemoryFreakActivity extends Activity {
     					   "values in the user's hands, while trying to prevent " +
     					   "some of the more common lmk adjustment errors. Here " +
     					   "are some tips to help get you started.\n\n" +
-    					   "1. The LMK Settings dropdown allows you to choose one of " +
-    					   "three preset values, Stock, Nexus S, and Talon. Stock is the setup " +
+    					   "1. The Low Memory Killer Settings dropdown allows you to choose one of " +
+    					   "three preset values, Samsung Stock, Gingerbread Stock (Nexus S), and Talon. Samsung Stock is the setup " +
     					   "designed by Samsung for the Gingerbread platform on the " +
-    					   "Galaxy S. Nexus S is the setup originaly designed by " +
+    					   "Galaxy S. Gingerbread Stock (Nexus S) is the setup originaly designed by " +
     					   "google for the AOSP Gingerbread platform. Talon is the " +
     					   "current setup designed by kodos96 for the Talon Kernel\n\n" +
     					   "2. The ZRAM slider adjusts ZRAM size, in MB, from 0 (disabled) " +
-    					   "to 256 in steps of 32MB. The higher this value is, the more " +
+    					   "to 672 in steps of 32MB. The higher this value is, the more " +
     					   "RAM the kernel can compress and store.\n\n" +
+    					   "NOTICE: Higher ZRAM settings will allow more data " +
+    					   "to be stored in RAM. HOWEVER, all of the data stored " +
+    					   "in ZRAM is compressed. This means that the data must " +
+    					   "be decompressed prior to use, and must be recompressed " +
+    					   "before being transfered back to ZRAM. This means that larger " +
+    					   "ZRAM sizes MAY introduce lag, due to the overhed of repeated " +
+    					   "compress/decompress cycles. You have been warned!!\n\n" +
     					   "3. The Swappiness slider lets you adjust how frequently " +
     					   "the kernel swaps pages from RAM to ZRAM. This is " +
     					   "adjustable from 0 (Swap Disabled) to 100 in steps of 10.\n\n" +
-    					   "4. The Hidden App Mem Size slider, which is only available " +
+    					   "4. The Memory for Background Apps slider, which is only available " +
     					   "when the Talon preset is selected, allows the user to fine-" +
     					   "tune their lmk for their particular needs, whether it be " +
     					   "more single task oriented, or " +
@@ -833,5 +891,129 @@ public class MemoryFreakActivity extends Activity {
     	
     	AlertDialog alert = builder.create();
     	alert.show();
+    }
+    
+    private boolean loadTalonSettings()
+    {
+    	try
+    	{
+    		BufferedReader reader = new BufferedReader(new FileReader("/bin/ram.conf.default"));
+    		String temp;
+    		String tempArr[];
+		
+    		for(;;)
+    		{
+    			temp = reader.readLine();
+    			if(temp == null)
+    				break;
+    			else if(temp.startsWith("FOREGROUND_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tfgappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("VISIBLE_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tvisappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("PERCEPTIBLE_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tpercappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HEAVY_WEIGHT_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Thwappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("SECONDARY_SERVER_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tsecseradj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("BACKUP_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tbupappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HOME_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Thomeappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HIDDEN_APP_MIN_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Thidappminadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("EMPTY_APP_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				Tempappadj = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("FOREGROUND_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tfgappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("VISIBLE_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tvisappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("PERCEPTIBLE_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tpercappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HEAVY_WEIGHT_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Thwappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("SECONDARY_SERVER_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tsecsermem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("BACKUP_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tbupappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HOME_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Thomeappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("HIDDEN_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Thidappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("EMPTY_APP_MEM"))
+    			{
+    				tempArr = temp.split("=");
+    				Tempappmem = Integer.parseInt(tempArr[1]);
+    			}
+    			else if(temp.startsWith("LMK_ADJ"))
+    			{
+    				tempArr = temp.split("=");
+    				TlmkParAdj = tempArr[1];
+    			}
+    			else if(temp.startsWith("LMK_MINFREE"))
+    			{
+    				tempArr = temp.split("=");
+    				TlmkParMin = tempArr[1];
+    			}
+    			else
+    			{
+    				continue;
+    			}
+    		
+    		}
+    	}catch(Exception Ignored){return false;}
+    	
+    	return true;
     }
 }

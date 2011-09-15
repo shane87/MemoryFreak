@@ -7,6 +7,7 @@
     <Spinner android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/lmkSpinner"></Spinner>
     <TextView android:layout_width="match_parent" android:text="TextView" android:layout_height="wrap_content" android:id="@+id/perfSizeTV"></TextView>
     <SeekBar android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingLeft="25px" android:paddingRight="25px" android:id="@+id/perfSeekbar"></SeekBar>
+    <TextView android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_width="wrap_content" android:text="@string/perfString"></TextView>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/relativeLayout1">
         <Button android:layout_height="wrap_content" android:layout_alignParentTop="true" android:id="@+id/perfResetBtn" android:text="@string/perfResetBtnTxt" android:layout_width="match_parent"></Button>
     </RelativeLayout>
