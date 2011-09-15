@@ -475,7 +475,7 @@ public class MemoryFreakActivity extends Activity {
     			TlmkParMinParts = TlmkParMin.split(",");
     			lmkParMin = TlmkParMinParts[0] + "," + TlmkParMinParts[1] + "," +
     					TlmkParMinParts[2] + "," + TlmkParMinParts[3] + "," +
-    					Integer.toString(hidappmem) + "," + Integer.toString(empappmem);
+    					Integer.toString(hidappmem) + "," + Integer.toString(empappmem) + "\"";
     		}
     		else
     		{

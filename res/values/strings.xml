@@ -9,6 +9,6 @@
     <string name="kErrTxt">OOPS!!!!</string>
     <string name="perfString">   Performance &lt;--------------------------&gt; Multitasking</string>
     <string name="perfResetBtnTxt">Reset To Talon Default</string>
-    <string name="version">1.20b</string>
+    <string name="version">1.21b</string>
     <string name="helpBtnTxt">Help / Tips</string>
 </resources>
