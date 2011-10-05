@@ -51,6 +51,7 @@ public class MemoryFreakActivity extends Activity {
 	SeekBar perfSeek;
 	Button helpBtn;
 	Button resetBtn;
+	Button drpCacheBtn;
 	
 	int lmkSelection;
 	
@@ -233,6 +234,7 @@ public class MemoryFreakActivity extends Activity {
     	lmkSpin = (Spinner)findViewById(R.id.lmkSpinner);
     	helpBtn = (Button)findViewById(R.id.perfHelpBtn);
     	resetBtn = (Button)findViewById(R.id.perfResetBtn);
+    	drpCacheBtn = (Button)findViewById(R.id.drpCacheBtn);
     	
     	if(lmkSelection == 2)
     	{
@@ -369,6 +371,13 @@ public class MemoryFreakActivity extends Activity {
 			
 			public void onClick(View v) {
 				resetHAppM();
+				
+			}
+		});
+    	drpCacheBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				dropCache();
 				
 			}
 		});
@@ -868,7 +877,12 @@ public class MemoryFreakActivity extends Activity {
     					   "tune their lmk for their particular needs, whether it be " +
     					   "more single task oriented, or " +
     					   "multitasking ability. The reset button will return " +
-    					   "the value back to the default Talon setting.");
+    					   "the value back to the default Talon setting.\n\n" +
+    					   "5. The \"Drop Caches\" button will call \"free\" followed by " +
+    					   "\"sync\" before telling the kernel to drop caches. After the " +
+    					   "caches are dropped, it calls \"free\" again. After it finishes " +
+    					   "it will display the results of both calls to \"free\" " +
+    					   "to show you caches were dropped.");
     	builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {}
@@ -1015,5 +1029,18 @@ public class MemoryFreakActivity extends Activity {
     	}catch(Exception Ignored){return false;}
     	
     	return true;
+    }
+    
+    private void dropCache()
+    {
+    	String out = "Dropping caches.\n";
+    	out = out.concat(ShellInterface.getProcessOutput("free") + "\n");
+    	ShellInterface.runCommand("sync");
+    	out = out.concat("Sync Successful!\n");
+    	ShellInterface.runCommand("echo \"3\" > /proc/sys/vm/drop_caches");
+    	out = out.concat("Caches Dropped!\n");
+    	out = out.concat(ShellInterface.getProcessOutput("free"));
+    	
+    	Toast.makeText(this, out, Toast.LENGTH_LONG).show();
     }
 }
