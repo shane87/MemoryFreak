@@ -52,6 +52,7 @@ public class MemoryFreakActivity extends Activity {
 	Button helpBtn;
 	Button resetBtn;
 	Button drpCacheBtn;
+	Button clrZramBtn;
 	
 	int lmkSelection;
 	
@@ -235,6 +236,7 @@ public class MemoryFreakActivity extends Activity {
     	helpBtn = (Button)findViewById(R.id.perfHelpBtn);
     	resetBtn = (Button)findViewById(R.id.perfResetBtn);
     	drpCacheBtn = (Button)findViewById(R.id.drpCacheBtn);
+    	clrZramBtn = (Button)findViewById(R.id.clearZrambtn);
     	
     	if(lmkSelection == 2)
     	{
@@ -378,6 +380,13 @@ public class MemoryFreakActivity extends Activity {
 			
 			public void onClick(View v) {
 				dropCache();
+				
+			}
+		});
+    	clrZramBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				clearZram();
 				
 			}
 		});
@@ -789,7 +798,9 @@ public class MemoryFreakActivity extends Activity {
     			" Swappiness, and, when the Talon preset is selected, Memory for Background Apps.\n\n" +
     			"A HUGE thanks goes to:\n" +
     			"eXistZ @ xda-developers.com for the Talon Kernel, and for the initial " +
-    			"idea for the app\nkodos96 @ xda-developers.com for co-dev on the Talon " +
+    			"idea for the app, as well as the dropcache and clearzram binaries that " +
+    			"some functions rely on" +
+    			"\nkodos96 @ xda-developers.com for co-dev on the Talon " +
     			"Kernel, and designing the ram.conf system that Memory Freak utilizes " +
     			"to set the lmk values\nytt3r @ xda-developers.com for co-dev of the " +
     			"Talon Kernel\nzacharias.maladroit @ xda-developers.com for co-dev " +
@@ -879,10 +890,19 @@ public class MemoryFreakActivity extends Activity {
     					   "multitasking ability. The reset button will return " +
     					   "the value back to the default Talon setting.\n\n" +
     					   "5. The \"Drop Caches\" button will call \"free\" followed by " +
-    					   "\"sync\" before telling the kernel to drop caches. After the " +
-    					   "caches are dropped, it calls \"free\" again. After it finishes " +
-    					   "it will display the results of both calls to \"free\" " +
-    					   "to show you caches were dropped.");
+    					   "\"dropcache\", created by existz, telling the kernel to drop caches. " +
+    					   "After the caches are dropped, it calls \"free\" again. After it" +
+    					   " finishes it will display the results of both calls to \"free\" " +
+    					   "to show you caches were dropped.\n\n" +
+    					   "6. The \"Clear ZRAM\" button makes a call to \"free\", followed by a " +
+    					   "call to \"clearzram\", created by existz, to reset and reload " +
+    					   "ZRAM, clearing any potentially stale data, and possibly helping " +
+    					   "with lag.\n\nNOTICE!!! \"Clear ZRAM\" should ONLY be used as a " +
+    					   "last resort to delay a reboot!! This clears all data from " +
+    					   "ZRAM, which will cause any active pages currently residing in " +
+    					   "ZRAM to be flushed back to RAM or dropped, possibly necessitating " +
+    					   "data to be fetched from the NAND memory again. You have been " +
+    					   "warned.");
     	builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {}
@@ -1035,10 +1055,19 @@ public class MemoryFreakActivity extends Activity {
     {
     	String out = "Dropping caches.\n";
     	out = out.concat(ShellInterface.getProcessOutput("free") + "\n");
-    	ShellInterface.runCommand("sync");
-    	out = out.concat("Sync Successful!\n");
-    	ShellInterface.runCommand("echo \"3\" > /proc/sys/vm/drop_caches");
+    	ShellInterface.runCommand("/bin/dropcache");
     	out = out.concat("Caches Dropped!\n");
+    	out = out.concat(ShellInterface.getProcessOutput("free"));
+    	
+    	Toast.makeText(this, out, Toast.LENGTH_LONG).show();
+    }
+    
+    private void clearZram()
+    {
+    	String out = "Clearing ZRAM.\n";
+    	out = out.concat(ShellInterface.getProcessOutput("free") + "\n");
+    	ShellInterface.runCommand("/bin/clearzram");
+    	out = out.concat("ZRAM Cleared!\n");
     	out = out.concat(ShellInterface.getProcessOutput("free"));
     	
     	Toast.makeText(this, out, Toast.LENGTH_LONG).show();

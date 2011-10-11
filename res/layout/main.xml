@@ -18,7 +18,10 @@
     <TextView android:layout_height="wrap_content" android:text="@string/swapHeaderTxt" android:layout_width="wrap_content" android:id="@+id/swappinessTV"></TextView>
     <SeekBar android:id="@+id/swappinessSB" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10" android:paddingLeft="25px" android:paddingRight="25px"></SeekBar>
     <TextView android:layout_width="wrap_content" android:text="@string/divider" android:id="@+id/textView2" android:layout_height="wrap_content"></TextView>
-    <Button android:layout_height="wrap_content" android:layout_width="match_parent" android:paddingRight="15px" android:layout_marginLeft="10px" android:id="@+id/drpCacheBtn" android:text="@string/drpCacheBtnTxt"></Button>
+    <RelativeLayout android:id="@+id/relativeLayout2" android:layout_width="match_parent" android:layout_height="wrap_content">
+    	<Button android:layout_height="wrap_content" android:layout_width="230px" android:paddingRight="15px" android:layout_marginLeft="10px" android:id="@+id/drpCacheBtn" android:text="@string/drpCacheBtnTxt"></Button>
+    	<Button android:layout_height="wrap_content" android:id="@+id/clearZrambtn" android:layout_width="200px" android:paddingRight="15px" android:layout_alignParentTop="true" android:layout_toRightOf="@+id/drpCacheBtn" android:text="@string/clrZrambtnTxt" android:layout_alignParentRight="true"></Button>
+    </RelativeLayout>
     <TextView android:id="@+id/textView6" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/divider"></TextView>
     <Button android:layout_height="wrap_content" android:id="@+id/perfHelpBtn" android:layout_marginLeft="10px" android:text="@string/helpBtnTxt" android:paddingRight="15px" android:layout_width="match_parent"></Button>
 </LinearLayout>
